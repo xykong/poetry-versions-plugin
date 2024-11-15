@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "poetry-versions-plugin"
+version = "0.1.0"
+description = ""
+authors = ["xy.kong <xy.kong@gmail.com>"]
+readme = "README.md"
+packages = [{include = "poetry_versions_plugin"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
