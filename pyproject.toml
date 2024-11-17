@@ -1,10 +1,15 @@
 [tool.poetry]
 name = "poetry-versions-plugin"
 version = "0.1.0"
-description = ""
+description = "Poetry plugin that automates version management and records Git information for Python projects."
 authors = ["xy.kong <xy.kong@gmail.com>"]
 readme = "README.md"
 packages = [{ include = "poetry_versions_plugin" }]
+license = "Apache-2.0"
+homepage = "https://github.com/xykong/poetry-versions-plugin"
+repository = "https://github.com/xykong/poetry-versions-plugin"
+documentation = "https://github.com/xykong/poetry-versions-plugin/blob/master/README.md"
+keywords = ["packaging", "poetry", "plugin", "versioning", "git"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -16,10 +21,10 @@ pytest = "^8.3.3"
 
 [tool.versions]
 branch = "release/0.1.0"
-commit = "0694d2e"
-commit_count = 7
-is_dirty = true
-datetime = "2024-11-18 00:56:19"
+commit = "25e0635"
+commit_count = 9
+is_dirty = false
+datetime = "2024-11-18 01:21:53"
 version = "0.1.0"
 
 [tool.versions.settings]
