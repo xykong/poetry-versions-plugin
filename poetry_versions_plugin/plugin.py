@@ -11,16 +11,13 @@ from poetry.plugins.plugin import Plugin
 from poetry.poetry import Poetry
 
 from poetry_versions_plugin import PLUGIN_NAME
-from poetry_versions_plugin.services import get_git_info, update_pyproject, update_py_file
+from poetry_versions_plugin.services import get_git_info, update_pyproject, update_py_file, update_readme
 
 
 class VersionsPlugin(Plugin):
 
     def activate(self, poetry: Poetry, io: IO):
         io.write_line(f'<b>{PLUGIN_NAME}</b>: activate init', Verbosity.VERBOSE)
-
-        io.write_line("Setting readme")
-        poetry.package.readme = "README.md"
 
         io.write_line(f'<b>{PLUGIN_NAME}</b>: activate finished', Verbosity.VERBOSE)
 
@@ -57,27 +54,39 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             event_name: str,
             dispatcher: EventDispatcher
     ) -> None:
+
         io = event.io
+        # noinspection PyUnresolvedReferences
+        pyproject = event.command.poetry.pyproject
+
         io.write_line(f'<b>{PLUGIN_NAME}</b>: event_hander {event_name} init', Verbosity.VERBOSE)
 
-        command = event.command
-        if not isinstance(command, VersionCommand):
+        if not isinstance(event.command, VersionCommand):
             return
 
         io.write_line(f'<b>{PLUGIN_NAME}</b>: event_hander {event_name} start processing', Verbosity.VERBOSE)
 
-        if io.is_debug():
-            io.write_line(
-                f"<debug>Command handler {event_name}</debug>"
-            )
-
         # 获取 Git 信息
         info = get_git_info()
-        update_pyproject(command, info)
-        update_py_file("versions.py", info)
 
-        io.write_line(f'<b>{PLUGIN_NAME}</b>: activate finished', Verbosity.NORMAL)
+        updated = ['pyproject.toml']
+        update_pyproject(info, pyproject, io)
 
-        io.write_line(f'The new version has been updated: {info}')
+        files = pyproject.data.get('tool', {}).get('versions', {}).get('files', {}).get('filename', {})
+        for file in files:
+            if file.endswith('.py'):
+                update_py_file(file, info)
+                io.write_line(f'<b>{PLUGIN_NAME}</b>: event_hander {event_name} update python file {file}',
+                              Verbosity.VERBOSE)
+                updated.append(file)
+            elif file == 'README.md':
+                # 更新 README.md 文件
+                update_readme(file, info)
+                updated.append(file)
+
+        io.write_line(f'<b>{PLUGIN_NAME}</b>: event_hander {event_name} The new version has been updated: {info}',
+                      Verbosity.VERBOSE)
+
+        io.write_line(f"Versions updated of {', '.join(updated)}", Verbosity.NORMAL)
 
         io.write_line(f'<b>{PLUGIN_NAME}</b>: event_hander {event_name} finished', Verbosity.VERBOSE)

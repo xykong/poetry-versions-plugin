@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-versions-plugin"
-version = "0.29.0"
+version = "0.63.0"
 description = ""
 authors = ["xy.kong <xy.kong@gmail.com>"]
 readme = "README.md"
@@ -17,11 +17,19 @@ pytest = "^8.3.3"
 
 [tool.versions]
 branch = "master"
-commit = "fb01329"
-commit_count = 2
+commit = "e9fe7ed"
+commit_count = 3
 is_dirty = true
-datetime = "2024-11-17 01:32:48"
-version = "0.29.0"
+datetime = "2024-11-17 20:38:58"
+version = "0.63.0"
+
+
+[tool.versions.files]
+filename = [
+    "poetry_versions_plugin/versions.py",
+]
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

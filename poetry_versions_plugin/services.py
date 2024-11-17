@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import git
@@ -51,8 +52,15 @@ def update_py_file(py_path, info):
     :param py_path: Python文件的路径
     :param info: 包含Git信息的字典
     """
+    # 获取目录路径
+    dir_path = os.path.dirname(py_path)
+
+    # 检查目录是否存在，如果不存在则创建
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path, exist_ok=True)
+
     with open(py_path, 'w') as f:
-        f.write("# Auto-generated version info\n")
+        f.write("# Auto-generated version info\n\n")
 
         for key, value in info.items():
             # 根据值的类型格式化输出
@@ -62,11 +70,12 @@ def update_py_file(py_path, info):
                 f.write(f"{key} = {value}\n")
 
 
-def update_pyproject(command, info):
+def update_pyproject(info, pyproject, io):
     """
     更新pyproject.toml文件，将Git信息和版本号写入其中。
-    :param command: poetry command 对象
     :param info: 包含Git信息的字典
+    :param pyproject: command.poetry.pyproject command 对象
+    :param io:
     :return: None
     """
 
@@ -74,12 +83,12 @@ def update_pyproject(command, info):
     try:
         # 获取版本号
         # version = command.poetry.package.version.text
-        version = str(command.poetry.pyproject.data["tool"]["poetry"]["version"])
+        version = str(pyproject.data["tool"]["poetry"]["version"])
 
-        if 'versions' not in command.poetry.pyproject.data['tool']:
-            command.poetry.pyproject.data['tool']['versions'] = {}
+        if 'versions' not in pyproject.data['tool']:
+            pyproject.data['tool']['versions'] = {}
 
-        versions = command.poetry.pyproject.data['tool']['versions']
+        versions = pyproject.data['tool']['versions']
 
         # Loop through the info dictionary and update each field
         for key, value in info.items():
@@ -89,8 +98,8 @@ def update_pyproject(command, info):
         versions['version'] = version
 
     except KeyError as ex:
-        command.io.write_line(f'Error with parsing pyproject: {ex}')
+        io.write_line(f'Error with parsing pyproject: {ex}')
         return
 
     # 保存更新
-    command.poetry.pyproject.save()
+    pyproject.save()
