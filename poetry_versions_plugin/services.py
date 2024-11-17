@@ -4,7 +4,7 @@ from datetime import datetime
 import git
 
 
-def get_git_info():
+def get_git_info(version=None):
     """
     获取当前Git仓库的相关信息，包括分支名称、最近提交的短SHA、提交数量、仓库是否有未提交的修改，以及当前时间。
     """
@@ -20,7 +20,8 @@ def get_git_info():
         "commit": commit,
         "commit_count": commit_count,
         "is_dirty": is_dirty,
-        "datetime": current_datetime
+        "datetime": current_datetime,
+        "version": version
     }
 
 
@@ -81,10 +82,6 @@ def update_pyproject(info, pyproject, io):
 
     # 更新 pyproject.toml
     try:
-        # 获取版本号
-        # version = command.poetry.package.version.text
-        version = str(pyproject.data["tool"]["poetry"]["version"])
-
         if 'versions' not in pyproject.data['tool']:
             pyproject.data['tool']['versions'] = {}
 
@@ -93,13 +90,44 @@ def update_pyproject(info, pyproject, io):
         # Loop through the info dictionary and update each field
         for key, value in info.items():
             versions[key] = value
-
-        # Update the version separately
-        versions['version'] = version
-
     except KeyError as ex:
         io.write_line(f'Error with parsing pyproject: {ex}')
         return
 
     # 保存更新
     pyproject.save()
+
+
+def commit_local_changes(repo_path, commit_message):
+    """
+    Commit local changes in the specified Git repository.
+
+    :param repo_path: Path to the local Git repository.
+    :param commit_message: Commit message to use.
+    :raises: ValueError if there are no changes to commit.
+    """
+
+    # Ensure the repository path exists
+    if not os.path.exists(repo_path):
+        raise FileNotFoundError(f"The specified repository path does not exist: {repo_path}")
+
+    # Initialize the repository
+    repo = git.Repo(repo_path)
+
+    # Check for uncommitted changes
+    if not repo.is_dirty(untracked_files=True):
+        raise ValueError("No changes to commit.")
+
+    # Stage all changes
+    repo.git.add(update=True)
+
+    # Include new untracked files
+    repo.git.add(A=True)
+
+    # Commit the changes
+    try:
+        repo.index.commit(commit_message)
+        print(f"Changes committed with message: '{commit_message}'")
+    except Exception as e:
+        print(f"Failed to commit changes: {e}")
+        raise
