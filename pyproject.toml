@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-versions-plugin"
-version = "0.63.0"
+version = "0.6.0"
 description = ""
 authors = ["xy.kong <xy.kong@gmail.com>"]
 readme = "README.md"
@@ -14,21 +14,21 @@ poetry = "^1.8.4"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 
-
 [tool.versions]
-branch = "master"
-commit = "e9fe7ed"
-commit_count = 3
+branch = "develop"
+commit = "6ffa675"
+commit_count = 4
 is_dirty = true
-datetime = "2024-11-17 20:38:58"
-version = "0.63.0"
+datetime = "2024-11-17 23:46:29"
+version = "0.6.0"
 
-
-[tool.versions.files]
+[tool.versions.settings]
+allow_dirty = true
+commit = false
+commit_message = "Bump version: {current_version} → {new_version}"
 filename = [
     "poetry_versions_plugin/versions.py",
 ]
-
 
 [build-system]
 requires = ["poetry-core"]
