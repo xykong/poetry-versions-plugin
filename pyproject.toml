@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-versions-plugin"
-version = "0.0.1"
+version = "0.1.0"
 description = ""
 authors = ["xy.kong <xy.kong@gmail.com>"]
 readme = "README.md"
@@ -15,12 +15,12 @@ poetry = "^1.8.4"
 pytest = "^8.3.3"
 
 [tool.versions]
-branch = "develop"
-commit = "ddafc67"
-commit_count = 6
+branch = "release/0.1.0"
+commit = "0694d2e"
+commit_count = 7
 is_dirty = true
-datetime = "2024-11-18 00:52:03"
-version = "0.0.1"
+datetime = "2024-11-18 00:56:19"
+version = "0.1.0"
 
 [tool.versions.settings]
 allow_dirty = true
