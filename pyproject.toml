@@ -16,15 +16,16 @@ pytest = "^8.3.3"
 
 [tool.versions]
 branch = "develop"
-commit = "3fb6355"
-commit_count = 5
+commit = "ddafc67"
+commit_count = 6
 is_dirty = true
-datetime = "2024-11-18 00:08:47"
+datetime = "2024-11-18 00:52:03"
 version = "0.0.1"
 
 [tool.versions.settings]
 allow_dirty = true
-commit = false
+commit = true
+commit_on = ["major", "minor"]
 commit_message = "Bump version: {current_version} → {new_version}"
 filename = [
     "poetry_versions_plugin/versions.py",
