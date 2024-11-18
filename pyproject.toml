@@ -20,11 +20,11 @@ poetry = "^1.8.4"
 pytest = "^8.3.3"
 
 [tool.versions]
-branch = "release/0.3.0"
-commit = "72a81fe"
-commit_count = 19
+branch = "develop"
+commit = "1541876"
+commit_count = 23
 is_dirty = true
-datetime = "2024-11-18 16:20:34"
+datetime = "2024-11-18 20:45:14"
 version = "0.3.0"
 
 [tool.versions.settings]
@@ -45,3 +45,6 @@ versions = "poetry_versions_plugin.plugin:VersionsPlugin"
 
 [tool.poetry.plugins."poetry.application.plugin"]
 versions = "poetry_versions_plugin.plugin:VersionsApplicationPlugin"
+
+[tool.poetry.scripts]
+release = "scripts.release:main"
