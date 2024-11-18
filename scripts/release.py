@@ -16,6 +16,9 @@ def run_command(command, timeout=60):
     except subprocess.TimeoutExpired:
         process.kill()
         stdout, stderr = process.communicate()
+        print(stdout)
+        if stderr:
+            print(stderr, file=sys.stderr)
         print(f"Command timed out after {timeout} seconds")
         raise
 
