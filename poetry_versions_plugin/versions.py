@@ -1,8 +1,12 @@
-# Auto-generated version info
+# THIS FILE IS GENERATED DURING PROJECT BUILD
+# See poetry poetry-versions-plugin for details
 
-branch = 'release/0.3.0'
-commit = '72a81fe'
-commit_count = 19
+branch = 'develop'
+commit = '1541876'
+commit_count = 23
 is_dirty = True
-datetime = '2024-11-18 16:20:34'
+datetime = '2024-11-18 20:45:14'
 version = '0.3.0'
+
+full_version = f'{version}.{branch}+{commit_count}.{commit}'
+# END OF GENERATED CODE
