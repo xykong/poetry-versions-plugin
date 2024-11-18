@@ -2,45 +2,30 @@ import subprocess
 import sys
 
 
-def run_command(command):
+def run_command(command, timeout=60):
     """Execute a system command and return its output."""
-
     print(f"Executing command: {command}")
 
-    # Use Popen to execute the command and allow real-time output
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-    # Read stdout and stderr line by line
-    stdout_lines = []
-    stderr_lines = []
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+        print(stdout)
+        if stderr:
+            print(stderr, file=sys.stderr)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        stdout, stderr = process.communicate()
+        print(f"Command timed out after {timeout} seconds")
+        raise
 
-    while True:
-        # Read a line from stdout
-        stdout_line = process.stdout.readline()
-        if stdout_line:
-            print(stdout_line, end='')  # Print the line immediately
-            stdout_lines.append(stdout_line)
+    # Check return code
+    if process.returncode != 0:
+        print(f"Command failed with return code {process.returncode}")
+        print(f"Error output: {stderr}")
+        raise subprocess.CalledProcessError(process.returncode, command)
 
-        # Read a line from stderr
-        stderr_line = process.stderr.readline()
-        if stderr_line:
-            print(stderr_line, end='', file=sys.stderr)  # Print the line immediately to stderr
-            stderr_lines.append(stderr_line)
-
-        # Check if the process is done
-        if stdout_line == '' and stderr_line == '' and process.poll() is not None:
-            break
-
-    # Get return code
-    return_code = process.returncode
-
-    # Check for errors
-    if return_code != 0:
-        print(f"Command failed with return code {return_code}")
-        print(f"Error output: {''.join(stderr_lines)}")
-        raise subprocess.CalledProcessError(return_code, command)
-
-    return ''.join(stdout_lines)
+    return stdout
 
 
 def highlight_text(text):
@@ -123,34 +108,46 @@ def publish_package():
     run_command("poetry publish --build --dry-run")
 
 
+def steps(total_steps):
+    current_step = 0
+
+    def step():
+        nonlocal current_step
+        result = f"{current_step}/{total_steps}"
+        current_step += 1
+        return result
+
+    return step
+
+
 def main():
     """主函数，执行发布流程"""
     if len(sys.argv) > 2:
         print("Usage: python scripts/release.py [major|minor|patch]")
         sys.exit(1)
 
-    steps = 6
+    step = steps(6)
 
-    print(highlight_text(f"0/{steps} Starting the release process..."))
+    print(highlight_text(f"{step()} Starting the release process..."))
     version_type = sys.argv[1] if len(sys.argv) == 2 else 'minor'
 
-    print(highlight_text(f"1/{steps} Checking if you are on the develop branch..."))
+    print(highlight_text(f"{step()} Checking if you are on the develop branch..."))
     check_develop_branch()
 
-    print(highlight_text(f"2/{steps} Checking for uncommitted changes..."))
+    print(highlight_text(f"{step()} Checking for uncommitted changes..."))
     check_uncommitted_changes()
 
     # 获取下一个版本号
-    print(highlight_text(f"3/{steps} Getting the next version number for {version_type}..."))
+    print(highlight_text(f"{step()} Getting the next version number for {version_type}..."))
     new_version = get_next_version(version_type)
 
-    print(highlight_text(f"4/{steps} Starting the git flow release process for version {new_version}..."))
+    print(highlight_text(f"{step()} Starting the git flow release process for version {new_version}..."))
     git_flow_release(new_version, version_type)
 
-    print(highlight_text(f"5/{steps} Publishing the package..."))
+    print(highlight_text(f"{step()} Publishing the package..."))
     publish_package()
 
-    print(highlight_text(f"\n6/{steps} 🎉🎉🎉 Release successful! The new version has been published "
+    print(highlight_text(f"\n{step()} 🎉🎉🎉 Release successful! The new version has been published "
                          "and uploaded to the repository! 🎉🎉🎉"))
     print(highlight_text("Thank you for your dedication and hard work. Keep going! 🚀"))
     print()
