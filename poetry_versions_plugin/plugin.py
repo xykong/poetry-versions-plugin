@@ -128,10 +128,15 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             commit_message = pyproject_get(pyproject, 'tool.versions.settings.commit_message',
                                            "Bump version: {current_version} → {new_version}")
 
-            commit_local_changes(pyproject.file.parent, commit_message.format(
-                current_version=self.current_version,
-                new_version=self.new_version
-            ))
+            dry_run = event.command.option('dry-run')
+
+            if dry_run:
+                write_line('dry-run mode, skip commit to local git repository')
+            else:
+                commit_local_changes(pyproject.file.parent, commit_message.format(
+                    current_version=self.current_version,
+                    new_version=self.new_version
+                ))
 
             write_line('commit to local git repoistory: ' + commit_message.format(
                 current_version=self.current_version,
