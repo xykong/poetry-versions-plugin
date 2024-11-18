@@ -3,13 +3,44 @@ import sys
 
 
 def run_command(command):
-    """运行命令并返回输出"""
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"Command failed: {command}")
-        print(result.stderr)
-        sys.exit(result.returncode)
-    return result.stdout.strip()
+    """Execute a system command and return its output."""
+
+    print(f"Executing command: {command}")
+
+    # Use Popen to execute the command and allow real-time output
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    # Read stdout and stderr line by line
+    stdout_lines = []
+    stderr_lines = []
+
+    while True:
+        # Read a line from stdout
+        stdout_line = process.stdout.readline()
+        if stdout_line:
+            print(stdout_line, end='')  # Print the line immediately
+            stdout_lines.append(stdout_line)
+
+        # Read a line from stderr
+        stderr_line = process.stderr.readline()
+        if stderr_line:
+            print(stderr_line, end='', file=sys.stderr)  # Print the line immediately to stderr
+            stderr_lines.append(stderr_line)
+
+        # Check if the process is done
+        if stdout_line == '' and stderr_line == '' and process.poll() is not None:
+            break
+
+    # Get return code
+    return_code = process.returncode
+
+    # Check for errors
+    if return_code != 0:
+        print(f"Command failed with return code {return_code}")
+        print(f"Error output: {''.join(stderr_lines)}")
+        raise subprocess.CalledProcessError(return_code, command)
+
+    return ''.join(stdout_lines)
 
 
 def check_uncommitted_changes():
@@ -89,6 +120,7 @@ def main():
     new_version = get_next_version(version_type)
 
     git_flow_release(new_version)
+
     publish_package()
 
     print("\n🎉🎉🎉 Release successful! The new version has been published and uploaded to the repository! 🎉🎉🎉")
