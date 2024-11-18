@@ -12,7 +12,7 @@ documentation = "https://github.com/xykong/poetry-versions-plugin/blob/master/RE
 keywords = ["packaging", "poetry", "plugin", "versioning", "git"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "3.*"
 gitpython = "^3.1.43"
 poetry = "^1.8.4"
 
