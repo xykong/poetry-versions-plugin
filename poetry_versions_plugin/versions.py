@@ -1,8 +1,8 @@
 # Auto-generated version info
 
-branch = 'release/0.2.0'
-commit = 'd48cd90'
-commit_count = 15
+branch = 'release/0.3.0'
+commit = '72a81fe'
+commit_count = 19
 is_dirty = True
-datetime = '2024-11-18 15:15:27'
-version = '0.2.0'
+datetime = '2024-11-18 16:20:34'
+version = '0.3.0'
