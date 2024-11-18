@@ -61,7 +61,9 @@ def update_py_file(py_path, info):
         os.makedirs(dir_path, exist_ok=True)
 
     with open(py_path, 'w') as f:
-        f.write("# Auto-generated version info\n\n")
+        f.write("# THIS FILE IS GENERATED DURING PROJECT BUILD\n")
+        f.write("# See poetry poetry-versions-plugin for details\n")
+        f.write("\n")
 
         for key, value in info.items():
             # 根据值的类型格式化输出
@@ -69,6 +71,10 @@ def update_py_file(py_path, info):
                 f.write(f"{key} = '{value}'\n")
             else:
                 f.write(f"{key} = {value}\n")
+
+        f.write("\n")
+        f.write("full_version = f'{version}.{branch}+{commit_count}.{commit}'\n")
+        f.write("# END OF GENERATED CODE\n")
 
 
 def update_pyproject(info, pyproject, io):
