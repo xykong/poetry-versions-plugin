@@ -48,6 +48,18 @@ def highlight_text(text):
     return f"\033[1m{text}\033[0m"
 
 
+def check_develop_branch():
+    """检查是否在 develop 分支上"""
+    current_commit = run_command("git rev-parse HEAD")
+    branches = run_command(f"git branch --contains {current_commit}")
+
+    if "develop" not in branches:
+        print("Error: Current commit is not on the develop branch. Exiting.")
+        sys.exit(1)
+
+    print("On the develop branch.")
+
+
 def check_uncommitted_changes():
     """检查是否有未提交的更改"""
     status = run_command("git status --porcelain")
@@ -117,25 +129,28 @@ def main():
         print("Usage: python scripts/release.py [major|minor|patch]")
         sys.exit(1)
 
-    steps = 5
+    steps = 6
 
     print(highlight_text(f"0/{steps} Starting the release process..."))
     version_type = sys.argv[1] if len(sys.argv) == 2 else 'minor'
 
-    print(highlight_text(f"1/{steps} Checking for uncommitted changes..."))
+    print(highlight_text(f"1/{steps} Checking if you are on the develop branch..."))
+    check_develop_branch()
+
+    print(highlight_text(f"2/{steps} Checking for uncommitted changes..."))
     check_uncommitted_changes()
 
     # 获取下一个版本号
-    print(highlight_text(f"2/{steps} Getting the next version number for {version_type}..."))
+    print(highlight_text(f"3/{steps} Getting the next version number for {version_type}..."))
     new_version = get_next_version(version_type)
 
-    print(highlight_text(f"3/{steps} Starting the git flow release process for version {new_version}..."))
+    print(highlight_text(f"4/{steps} Starting the git flow release process for version {new_version}..."))
     git_flow_release(new_version, version_type)
 
-    print(highlight_text(f"4/{steps} Publishing the package..."))
+    print(highlight_text(f"5/{steps} Publishing the package..."))
     publish_package()
 
-    print(highlight_text(f"\n5/{steps} 🎉🎉🎉 Release successful! The new version has been published "
+    print(highlight_text(f"\n6/{steps} 🎉🎉🎉 Release successful! The new version has been published "
                          "and uploaded to the repository! 🎉🎉🎉"))
     print(highlight_text("Thank you for your dedication and hard work. Keep going! 🚀"))
     print()
