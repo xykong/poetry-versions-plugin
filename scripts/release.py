@@ -24,7 +24,7 @@ def check_uncommitted_changes():
     choice = input("Do you want to commit these changes? (y/n): ").strip().lower()
     if choice != 'yes' and choice != 'y':
         print("No changes committed. Exiting.")
-        return
+        sys.exit(1)
 
     message = input("Enter commit message: ")
     run_command("git add .")
@@ -36,7 +36,7 @@ def check_uncommitted_changes():
     print(commit_details)
 
     # 询问用户是否继续
-    confirm = input("\nDo you want to continue with the next steps? (yes/no): ").strip().lower()
+    confirm = input("\nDo you want to continue with the next steps? (y/n): ").strip().lower()
     if confirm != 'yes' or confirm != 'y':
         print("Stopping the process as requested.")
         return
@@ -46,9 +46,20 @@ def check_uncommitted_changes():
 
 def get_next_version(version_type):
     """获取下一个版本号"""
-    next_version = run_command(f"poetry version {version_type} --dry-run")
+    # Execute the command and capture the output
+    output = run_command(f"poetry version {version_type} --dry-run")
+
+    # Split the output into lines
+    lines = output.splitlines()
+
+    # Assume the first line contains the version bump information
+    first_line = lines[0]
+
+    # Split the first line by spaces and get the last element which is the new version
+    next_version = first_line.split()[-1]
+
     print(f"Next version: {next_version}")
-    return next_version.split()[-1]
+    return next_version
 
 
 def git_flow_release(version):
