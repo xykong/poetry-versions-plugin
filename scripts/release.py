@@ -113,7 +113,7 @@ def get_next_version(version_type):
 def git_flow_release(version, version_type):
     """使用 git flow 进行版本发布"""
     run_command(f"git flow release start {version}")
-    run_command(f"poetry version {version_type}")
+    run_command(f"poetry version {version_type} --dry-run")
     run_command(f'git flow release finish {version} -m "publish v{version}"')
 
 
