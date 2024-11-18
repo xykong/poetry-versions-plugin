@@ -43,6 +43,11 @@ def run_command(command):
     return ''.join(stdout_lines)
 
 
+def highlight_text(text):
+    # ANSI escape code for bold/highlighted text
+    return f"\033[1m{text}\033[0m"
+
+
 def check_uncommitted_changes():
     """检查是否有未提交的更改"""
     status = run_command("git status --porcelain")
@@ -93,10 +98,10 @@ def get_next_version(version_type):
     return next_version
 
 
-def git_flow_release(version):
+def git_flow_release(version, version_type):
     """使用 git flow 进行版本发布"""
     run_command(f"git flow release start {version}")
-    run_command("poetry version minor")
+    run_command(f"poetry version {version_type}")
     run_command(f'git flow release finish {version} -m "publish v{version}"')
 
 
@@ -112,19 +117,28 @@ def main():
         print("Usage: python scripts/release.py [major|minor|patch]")
         sys.exit(1)
 
+    steps = 5
+
+    print(highlight_text(f"0/{steps} Starting the release process..."))
     version_type = sys.argv[1] if len(sys.argv) == 2 else 'minor'
 
+    print(highlight_text(f"1/{steps} Checking for uncommitted changes..."))
     check_uncommitted_changes()
 
     # 获取下一个版本号
+    print(highlight_text(f"2/{steps} Getting the next version number for {version_type}..."))
     new_version = get_next_version(version_type)
 
-    git_flow_release(new_version)
+    print(highlight_text(f"3/{steps} Starting the git flow release process for version {new_version}..."))
+    git_flow_release(new_version, version_type)
 
+    print(highlight_text(f"4/{steps} Publishing the package..."))
     publish_package()
 
-    print("\n🎉🎉🎉 Release successful! The new version has been published and uploaded to the repository! 🎉🎉🎉")
-    print("Thank you for your dedication and hard work. Keep going! 🚀")
+    print(highlight_text(f"\n5/{steps} 🎉🎉🎉 Release successful! The new version has been published "
+                         "and uploaded to the repository! 🎉🎉🎉"))
+    print(highlight_text("Thank you for your dedication and hard work. Keep going! 🚀"))
+    print()
 
 
 if __name__ == "__main__":
