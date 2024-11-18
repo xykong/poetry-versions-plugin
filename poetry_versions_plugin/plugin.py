@@ -96,6 +96,8 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         write_line('start processing')
 
+        dry_run = event.command.option('dry-run')
+
         # 获取 Git 信息
         info = get_git_info(version=self.new_version)
         if not info:
@@ -108,17 +110,17 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             return
 
         updated = ['pyproject.toml']
-        update_pyproject(info, pyproject, event.io)
+        update_pyproject(info, pyproject, event.io, dry_run)
 
         files = pyproject_get(pyproject, 'tool.versions.settings.filename', [])
         for file in files:
             if file.endswith('.py'):
-                update_py_file(file, info)
+                update_py_file(file, info, dry_run)
                 write_line(f'update python file {file}')
                 updated.append(file)
             elif file == 'README.md':
                 # 更新 README.md 文件
-                update_readme(file, info)
+                update_readme(file, info, dry_run)
                 updated.append(file)
 
         commit = pyproject_get(pyproject, 'tool.versions.settings.commit', False)
@@ -127,8 +129,6 @@ class VersionsApplicationPlugin(ApplicationPlugin):
         if commit and argument in commit_on:
             commit_message = pyproject_get(pyproject, 'tool.versions.settings.commit_message',
                                            "Bump version: {current_version} → {new_version}")
-
-            dry_run = event.command.option('dry-run')
 
             if dry_run:
                 write_line('dry-run mode, skip commit to local git repository')
