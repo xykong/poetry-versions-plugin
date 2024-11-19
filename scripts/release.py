@@ -12,8 +12,13 @@ def run_command(command, user_input=None, env=None):
         env=env,
     )
 
+    print('run_command:', command)
+
     # Use communicate method to send input and get output
     stdout, stderr = process.communicate(input=user_input)
+
+    print('stdout:', stdout)
+    print('stderr:', stderr)
 
     # Return combined output
     return stdout + stderr
