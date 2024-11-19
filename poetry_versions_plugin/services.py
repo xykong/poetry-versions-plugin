@@ -25,7 +25,7 @@ def get_git_info(version=None):
     }
 
 
-def update_readme(readme_path, info, dry_run):
+def update_readme(readme_path, info, dry_run=False):
     """
     更新README.md文件中的占位符，替换成Git信息。
 
@@ -56,7 +56,7 @@ def update_readme(readme_path, info, dry_run):
             f.truncate()
 
 
-def update_py_file(py_path, info, dry_run):
+def update_py_file(py_path, info, dry_run=False):
     """
     创建或更新Python文件，将Git信息写入其中。
 
@@ -98,7 +98,7 @@ def update_py_file(py_path, info, dry_run):
             f.write(content)
 
 
-def update_pyproject(info, pyproject, io, dry_run):
+def update_pyproject(info, pyproject, io, dry_run=False):
     """
     更新pyproject.toml文件，将Git信息和版本号写入其中。
     :param info: 包含Git信息的字典
