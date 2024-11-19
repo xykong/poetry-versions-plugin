@@ -2,33 +2,21 @@ import subprocess
 import sys
 
 
-def run_command(command, timeout=60):
-    """Execute a system command and return its output."""
-    print(f"Executing command: {command}")
+def run_command(command, user_input=None, env=None):
+    process = subprocess.Popen(
+        command, shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.PIPE,
+        text=True,
+        env=env,
+    )
 
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    # Use communicate method to send input and get output
+    stdout, stderr = process.communicate(input=user_input)
 
-    try:
-        stdout, stderr = process.communicate(timeout=timeout)
-        print(stdout)
-        if stderr:
-            print(stderr, file=sys.stderr)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        stdout, stderr = process.communicate()
-        print(stdout)
-        if stderr:
-            print(stderr, file=sys.stderr)
-        print(f"Command timed out after {timeout} seconds")
-        raise
-
-    # Check return code
-    if process.returncode != 0:
-        print(f"Command failed with return code {process.returncode}")
-        print(f"Error output: {stderr}")
-        raise subprocess.CalledProcessError(process.returncode, command)
-
-    return stdout
+    # Return combined output
+    return stdout + stderr
 
 
 def highlight_text(text):
