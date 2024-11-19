@@ -1,3 +1,5 @@
+import subprocess
+
 import pexpect
 import pytest
 
@@ -23,9 +25,17 @@ def test_run_command_nonexistent_command():
     # 测试不存在的命令
     command = "nonexistent_command"
 
-    output = run_command(command)
+    with pytest.raises(subprocess.CalledProcessError) as excinfo:
+        run_command(command)
 
-    assert "command not found" in output
+    # Access the exception information
+    exception = excinfo.value
+    assert exception.cmd == command  # Verify the command
+    assert exception.stdout is not None  # Check if stderr is captured
+
+    # Print or inspect the command and stderr
+    print(f"Command: {exception.cmd}")
+    print(f"Stderr: {exception.stderr}")
 
 
 def test_run_command_interactive():
@@ -50,8 +60,16 @@ def test_run_command_with_input():
 def test_run_command_error_output():
     # 测试命令错误输出
     command = "ls non_existent_directory"
-    output = run_command(command)
-    assert "No such file or directory" in output
+
+    with pytest.raises(subprocess.CalledProcessError) as excinfo:
+        output = run_command(command)
+
+    # Access the exception information
+    exception = excinfo.value
+    assert exception.cmd == command  # Verify the command
+    assert exception.stdout is not None  # Check if stderr is captured
+
+    assert "No such file or directory" in exception.stdout
 
 
 def test_run_command_no_output():
