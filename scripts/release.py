@@ -20,6 +20,9 @@ def run_command(command, user_input=None, env=None):
     print('stdout:', stdout)
     print('stderr:', stderr)
 
+    if process.returncode != 0:
+        raise subprocess.CalledProcessError(process.returncode, command, stderr)
+
     # Return combined output
     return stdout + stderr
 
