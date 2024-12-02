@@ -87,10 +87,6 @@ class VersionsApplicationPlugin(ApplicationPlugin):
         self.git_info['version'] = str(pyproject.data["tool"]["poetry"]["version"])
 
         allow_dirty = pyproject_get(pyproject, 'tool.versions.settings.allow_dirty', False)
-        if self.git_info['is_dirty'] and not allow_dirty:
-            write_line(f'git information {self.git_info}, repo is dirty, abort processing')
-            return
-
         updated = ['pyproject.toml']
         update_pyproject(self.git_info, pyproject, event.io, dry_run)
 
@@ -115,6 +111,11 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             if dry_run:
                 write_line('dry-run mode, skip commit to local git repository')
             else:
+
+                if self.git_info['is_dirty'] and not allow_dirty:
+                    write_line(f'git information {self.git_info}, repo is dirty, abort processing')
+                    return
+
                 commit_local_changes(pyproject.file.parent, commit_message.format(
                     current_version=self.current_version,
                     new_version=self.new_version
