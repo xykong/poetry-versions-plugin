@@ -105,7 +105,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
         commit = pyproject_get(pyproject, 'tool.versions.settings.commit', False)
         commit_on = pyproject_get(pyproject, 'tool.versions.settings.commit_on', [])
         argument = event.command.argument("version")
-        if commit and argument in commit_on:
+        if commit and (argument in commit_on or argument == self.new_version):
             commit_message = pyproject_get(pyproject, 'tool.versions.settings.commit_message',
                                            "Bump version: {current_version} → {new_version}")
 
