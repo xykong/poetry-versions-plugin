@@ -1,12 +1,12 @@
 # THIS FILE IS GENERATED DURING PROJECT BUILD
 # See poetry poetry-versions-plugin for details
 
-branch = 'release/0.5.0'
-commit = 'fdae5e8'
-commit_count = 58
+branch = 'release/0.6.0'
+commit = '33f3ffc'
+commit_count = 63
 is_dirty = False
-datetime = '2024-12-06 18:19:55'
-version = '0.5.0'
+datetime = '2024-12-07 00:55:30'
+version = '0.6.0'
 
 full_version = f'{version}.{branch}+{commit_count}.{commit}'
 # END OF GENERATED CODE
