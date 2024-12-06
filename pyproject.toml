@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-versions-plugin"
-version = "0.4.0"
+version = "0.5.0"
 description = "Poetry plugin that automates version management and records Git information for Python projects."
 authors = ["xy.kong <xy.kong@gmail.com>"]
 readme = "README.md"
@@ -20,12 +20,12 @@ poetry = "^1.8.4"
 pytest = "^8.3.3"
 
 [tool.versions]
-branch = "release/0.4.0"
-commit = "3cf82c0"
-commit_count = 54
+branch = "release/0.5.0"
+commit = "fdae5e8"
+commit_count = 58
 is_dirty = false
-datetime = "2024-12-02 20:43:54"
-version = "0.4.0"
+datetime = "2024-12-06 18:19:55"
+version = "0.5.0"
 
 [tool.versions.settings]
 allow_dirty = false
