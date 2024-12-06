@@ -74,6 +74,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         # noinspection PyUnresolvedReferences
         pyproject = event.command.poetry.pyproject
+        self.new_version = str(pyproject.data["tool"]["poetry"]["version"])
 
         write_line('start processing')
 
@@ -84,7 +85,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             write_line('git information get failed')
             return
 
-        self.git_info['version'] = str(pyproject.data["tool"]["poetry"]["version"])
+        self.git_info['version'] = self.new_version
 
         allow_dirty = pyproject_get(pyproject, 'tool.versions.settings.allow_dirty', False)
         updated = ['pyproject.toml']
