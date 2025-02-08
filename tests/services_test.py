@@ -118,7 +118,7 @@ def test_get_git_info_on_current_repo():
 
 @pytest.fixture
 def git_info():
-    """提供一个示例Git信息字典用于测试。"""
+    """Provide a sample Git information dictionary for testing."""
     return {
         "branch": "main",
         "commit": "abcdefg",
@@ -129,7 +129,7 @@ def git_info():
 
 
 def test_update_readme(tmp_path, git_info):
-    """测试update_readme函数是否正确替换占位符。"""
+    """Test if the update_readme function correctly replaces placeholders."""
     readme_content = """# Project
 
 Branch: <!-- BRANCH -->
@@ -155,7 +155,7 @@ Date: 2023-10-05 10:00:00
 
 
 def test_update_py_file(tmp_path, git_info):
-    """测试update_py_file函数是否正确生成Python文件。"""
+    """Test if the update_py_file function correctly generates a Python file."""
     py_path = tmp_path / "version_info.py"
 
     update_py_file(py_path, git_info)

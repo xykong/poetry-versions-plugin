@@ -3,6 +3,15 @@ import sys
 
 
 def run_command(command, user_input=None, env=None):
+    """
+    Execute a command in a subprocess, optionally providing input and environment variables.
+
+    :param command: The command to run.
+    :param user_input: Optional input to send to the command's standard input.
+    :param env: Optional dictionary of environment variables to set for the command.
+    :return: Combined output of stdout and stderr.
+    :raises: subprocess.CalledProcessError if the command returns a non-zero exit code.
+    """
     process = subprocess.Popen(
         command, shell=True,
         stdout=subprocess.PIPE,
@@ -28,12 +37,17 @@ def run_command(command, user_input=None, env=None):
 
 
 def highlight_text(text):
-    # ANSI escape code for bold/highlighted text
+    """
+    Return the given text formatted with ANSI escape codes for bold/highlighted text.
+
+    :param text: The text to format.
+    :return: Formatted text.
+    """
     return f"\033[1m{text}\033[0m"
 
 
 def check_develop_branch():
-    """检查是否在 develop 分支上"""
+    """Check if the current branch is 'develop'."""
     current_commit = run_command("git rev-parse HEAD")
     branches = run_command(f"git branch --contains {current_commit}")
 
@@ -45,7 +59,7 @@ def check_develop_branch():
 
 
 def check_uncommitted_changes():
-    """检查是否有未提交的更改"""
+    """Check for uncommitted changes in the repository."""
     status = run_command("git status --porcelain")
     if not status:
         print("No uncommitted changes found.")
@@ -62,22 +76,22 @@ def check_uncommitted_changes():
     run_command("git add .")
     run_command(f'git commit -m "{message}"')
 
-    # 获取并显示提交的详细信息
+    # Retrieve and display commit details
     commit_details = run_command("git show --stat HEAD")
     print("\nCommit details:")
     print(commit_details)
 
-    # 询问用户是否继续
+    # Ask user if they want to continue
     confirm = input("\nDo you want to continue with the next steps? (y/n): ").strip().lower()
-    if confirm != 'yes' or confirm != 'y':
+    if confirm != 'yes' and confirm != 'y':
         print("Stopping the process as requested.")
-        return
+        sys.exit(1)
 
     print("Continuing with the next steps...")
 
 
 def get_next_version(version_type):
-    """获取下一个版本号"""
+    """Get the next version number based on the specified version type."""
     # Execute the command and capture the output
     output = run_command(f"poetry version {version_type} --dry-run")
 
@@ -95,19 +109,25 @@ def get_next_version(version_type):
 
 
 def git_flow_release(version, version_type):
-    """使用 git flow 进行版本发布"""
+    """Perform a release using git flow."""
     run_command(f"git flow release start {version}")
     run_command(f"poetry version {version_type} --dry-run")
     run_command(f'git flow release finish {version} -m "publish v{version}"')
 
 
 def publish_package():
-    """切换到 master 分支并发布包"""
+    """Switch to the master branch and publish the package."""
     run_command("git checkout master")
     run_command("poetry publish --build --dry-run")
 
 
 def steps(total_steps):
+    """
+    Create a step counter for a multi-step process.
+
+    :param total_steps: The total number of steps in the process.
+    :return: A function that returns the current step progress as a string.
+    """
     current_step = 0
 
     def step():
@@ -120,7 +140,7 @@ def steps(total_steps):
 
 
 def main():
-    """主函数，执行发布流程"""
+    """Main function to execute the release process."""
     if len(sys.argv) > 2:
         print("Usage: python scripts/release.py [major|minor|patch]")
         sys.exit(1)
@@ -136,7 +156,7 @@ def main():
     print(highlight_text(f"{step()} Checking for uncommitted changes..."))
     check_uncommitted_changes()
 
-    # 获取下一个版本号
+    # Get the next version number
     print(highlight_text(f"{step()} Getting the next version number for {version_type}..."))
     new_version = get_next_version(version_type)
 

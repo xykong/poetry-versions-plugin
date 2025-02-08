@@ -6,7 +6,9 @@ import git
 
 def get_git_info(version=None):
     """
-    获取当前Git仓库的相关信息，包括分支名称、最近提交的短SHA、提交数量、仓库是否有未提交的修改，以及当前时间。
+    Retrieve information about the current Git repository, including branch name,
+    short SHA of the latest commit, total number of commits, whether there are uncommitted changes,
+    and the current date and time.
     """
     repo = git.Repo(search_parent_directories=True)
     branch = repo.active_branch.name
@@ -27,11 +29,11 @@ def get_git_info(version=None):
 
 def update_readme(readme_path, info, dry_run=False):
     """
-    更新README.md文件中的占位符，替换成Git信息。
+    Update placeholders in the README.md file with Git information.
 
-    :param readme_path: README.md文件的路径
-    :param info: 包含Git信息的字典
-    :param dry_run: 是否为 dry-run 模式
+    :param readme_path: Path to the README.md file
+    :param info: Dictionary containing Git information
+    :param dry_run: If True, print what would be changed instead of modifying the file
     """
     # Open the README file and read its content
     with open(readme_path, 'r') as f:
@@ -50,24 +52,22 @@ def update_readme(readme_path, info, dry_run=False):
         print(new_content)
     else:
         # If not a dry run, write changes to the file
-        with open(readme_path, 'r+') as f:
-            f.seek(0)
+        with open(readme_path, 'w') as f:
             f.write(new_content)
-            f.truncate()
 
 
 def update_py_file(py_path, info, dry_run=False):
     """
-    创建或更新Python文件，将Git信息写入其中。
+    Create or update a Python file with Git information.
 
-    :param py_path: Python文件的路径
-    :param info: 包含Git信息的字典
-    :param dry_run: 是否为 dry-run 模式
+    :param py_path: Path to the Python file
+    :param info: Dictionary containing Git information
+    :param dry_run: If True, print what would be done instead of making changes
     """
-    # 获取目录路径
+    # Get the directory path
     dir_path = os.path.dirname(py_path)
 
-    # 检查目录是否存在，如果不存在则创建
+    # Check if the directory exists, create it if not
     if not os.path.exists(dir_path):
         if dry_run:
             print(f"Would create directory: {dir_path}")
@@ -79,7 +79,7 @@ def update_py_file(py_path, info, dry_run=False):
     content += "# See poetry poetry-versions-plugin for details\n\n"
 
     for key, value in info.items():
-        # 根据值的类型格式化输出
+        # Format output based on the type of value
         if isinstance(value, str):
             content += f"{key} = '{value}'\n"
         else:
@@ -100,15 +100,16 @@ def update_py_file(py_path, info, dry_run=False):
 
 def update_pyproject(info, pyproject, io, dry_run=False):
     """
-    更新pyproject.toml文件，将Git信息和版本号写入其中。
-    :param info: 包含Git信息的字典
-    :param pyproject: command.poetry.pyproject command 对象
-    :param io:
-    :param dry_run: 是否为 dry-run 模式
+    Update the pyproject.toml file with Git information and version number.
+
+    :param info: Dictionary containing Git information
+    :param pyproject: The poetry pyproject command object
+    :param io: The input/output interface for logging messages
+    :param dry_run: If True, skip the actual file write
     :return: None
     """
 
-    # 更新 pyproject.toml
+    # Update pyproject.toml
     try:
         if 'versions' not in pyproject.data['tool']:
             pyproject.data['tool']['versions'] = {}
@@ -119,10 +120,10 @@ def update_pyproject(info, pyproject, io, dry_run=False):
         for key, value in info.items():
             versions[key] = value
     except KeyError as ex:
-        io.write_line(f'Error with parsing pyproject: {ex}')
+        io.write_line(f'Error parsing pyproject: {ex}')
         return
 
-    # 保存更新
+    # Save the updates
     if dry_run:
         io.write_line('dry-run mode, skip updating pyproject.toml')
     else:

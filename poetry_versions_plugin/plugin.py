@@ -27,6 +27,7 @@ def write_line(message: str, verbosity: Verbosity = Verbosity.VERBOSE):
     print(message, verbosity)
 
 
+# noinspection PyUnusedLocal
 class VersionsApplicationPlugin(ApplicationPlugin):
     def __init__(self):
         super().__init__()
@@ -40,7 +41,6 @@ class VersionsApplicationPlugin(ApplicationPlugin):
         # noinspection PyTypeChecker
         application.event_dispatcher.add_listener(console_events.TERMINATE, self.after_version_command)
 
-    # noinspection PyUnusedLocal
     def before_version_command(
             self,
             event: ConsoleCommandEvent,
@@ -59,7 +59,6 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         io.write_line(f'<b>{PLUGIN_NAME}</b>: before_version_command {event_name} finished', Verbosity.VERBOSE)
 
-    # noinspection PyUnusedLocal
     @wrap_write_line
     def after_version_command(
             self,
