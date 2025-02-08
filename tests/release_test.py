@@ -2,7 +2,6 @@ import subprocess
 
 import pexpect
 import pytest
-
 from scripts.release import run_command
 
 
