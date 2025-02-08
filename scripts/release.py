@@ -4,12 +4,12 @@ import sys
 
 def run_command(command, user_input=None, env=None):
     """
-    Execute a command in a subprocess, optionally providing input and environment variables.
+    execute a command in a subprocess, optionally providing input and environment variables.
 
-    :param command: The command to run.
-    :param user_input: Optional input to send to the command's standard input.
-    :param env: Optional dictionary of environment variables to set for the command.
-    :return: Combined output of stdout and stderr.
+    :param command: the command to run.
+    :param user_input: optional input to send to the command's standard input.
+    :param env: optional dictionary of environment variables to set for the command.
+    :return: combined output of stdout and stderr.
     :raises: subprocess.CalledProcessError if the command returns a non-zero exit code.
     """
     process = subprocess.Popen(
@@ -111,19 +111,21 @@ def get_next_version(version_type):
 def git_flow_release(version, version_type):
     """Perform a release using git flow."""
     run_command(f"git flow release start {version}")
-    run_command(f"poetry version {version_type} --dry-run")
+    # run_command(f"poetry version {version_type} --dry-run")
+    run_command(f"poetry version {version_type}")
     run_command(f'git flow release finish {version} -m "publish v{version}"')
 
 
 def publish_package():
-    """Switch to the master branch and publish the package."""
+    """Switch to the "master" branch and publish the package."""
     run_command("git checkout master")
-    run_command("poetry publish --build --dry-run")
+    # run_command("poetry publish --build --dry-run")
+    run_command("poetry publish --build")
 
 
 def steps(total_steps):
     """
-    Create a step counter for a multi-step process.
+    Create a step counter for a multistep process.
 
     :param total_steps: The total number of steps in the process.
     :return: A function that returns the current step progress as a string.
