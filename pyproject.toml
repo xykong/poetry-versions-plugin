@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-versions-plugin"
-version = "0.6.0"
+version = "0.6.1"
 description = "Poetry plugin that automates version management and records Git information for Python projects."
 authors = ["xy.kong <xy.kong@gmail.com>"]
 readme = "README.md"
@@ -20,17 +20,17 @@ poetry = "^1.8.4"
 pytest = "^8.3.3"
 
 [tool.versions]
-branch = "release/0.6.0"
-commit = "33f3ffc"
-commit_count = 63
+branch = "release/0.6.1"
+commit = "db88c4c"
+commit_count = 68
 is_dirty = false
-datetime = "2024-12-07 00:55:30"
-version = "0.6.0"
+datetime = "2025-02-08 14:31:08"
+version = "0.6.1"
 
 [tool.versions.settings]
 allow_dirty = false
 commit = true
-commit_on = ["major", "minor"]
+commit_on = ["major", "minor", "patch"]
 commit_message = "Bump version: {current_version} → {new_version}"
 filename = [
     "poetry_versions_plugin/versions.py",
