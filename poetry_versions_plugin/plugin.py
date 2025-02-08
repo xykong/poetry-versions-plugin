@@ -70,6 +70,13 @@ class VersionsApplicationPlugin(ApplicationPlugin):
         write_line('init')
 
         if not isinstance(event.command, VersionCommand):
+            write_line('not a version command, skip')
+            return
+
+        # Check if a version argument is provided
+        version_argument = event.command.argument("version")
+        if not version_argument:
+            write_line('No version bump specified, skipping updates.')
             return
 
         # noinspection PyUnresolvedReferences
@@ -104,8 +111,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         commit = pyproject_get(pyproject, 'tool.versions.settings.commit', False)
         commit_on = pyproject_get(pyproject, 'tool.versions.settings.commit_on', [])
-        argument = event.command.argument("version")
-        if commit and (argument in commit_on or argument == self.new_version):
+        if commit and (version_argument in commit_on or version_argument == self.new_version):
             commit_message = pyproject_get(pyproject, 'tool.versions.settings.commit_message',
                                            "Bump version: {current_version} → {new_version}")
 
@@ -122,7 +128,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
                     new_version=self.new_version
                 ))
 
-            write_line('commit to local git repoistory: ' + commit_message.format(
+            write_line('commit to local git repository: ' + commit_message.format(
                 current_version=self.current_version,
                 new_version=self.new_version
             ))
