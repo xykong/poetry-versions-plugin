@@ -3,6 +3,7 @@ import re
 from functools import wraps
 
 from cleo.io.outputs.output import Verbosity
+
 from poetry_versions_plugin import PLUGIN_NAME
 
 

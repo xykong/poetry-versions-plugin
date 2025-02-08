@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 
 import git
+from cleo.io.outputs.output import Verbosity
 
 
 def get_git_info(version=None):
@@ -56,12 +57,13 @@ def update_readme(readme_path, info, dry_run=False):
             f.write(new_content)
 
 
-def update_py_file(py_path, info, dry_run=False):
+def update_py_file(py_path, info, write_line, dry_run=False):
     """
     Create or update a Python file with Git information.
 
     :param py_path: Path to the Python file
     :param info: Dictionary containing Git information
+    :param write_line: Function to write a line to the console
     :param dry_run: If True, print what would be done instead of making changes
     """
     # Get the directory path
@@ -70,7 +72,7 @@ def update_py_file(py_path, info, dry_run=False):
     # Check if the directory exists, create it if not
     if not os.path.exists(dir_path):
         if dry_run:
-            print(f"Would create directory: {dir_path}")
+            write_line(f"Would create directory: {dir_path}")
         else:
             os.makedirs(dir_path, exist_ok=True)
 
@@ -90,21 +92,20 @@ def update_py_file(py_path, info, dry_run=False):
     content += "# END OF GENERATED CODE\n"
 
     if dry_run:
-        print(f"Would write to file: {py_path}")
-        print("File content would be:")
-        print(content)
+        write_line(f"Would write to file: {py_path}", Verbosity.VERBOSE)
+        write_line(f"File content would be:\n\n{content}", Verbosity.VERBOSE)
     else:
         with open(py_path, 'w') as f:
             f.write(content)
 
 
-def update_pyproject(info, pyproject, io, dry_run=False):
+def update_pyproject(info, pyproject, write_line, dry_run=False):
     """
     Update the pyproject.toml file with Git information and version number.
 
     :param info: Dictionary containing Git information
     :param pyproject: The poetry pyproject command object
-    :param io: The input/output interface for logging messages
+    :param write_line: Function to write a line to the console
     :param dry_run: If True, skip the actual file write
     :return: None
     """
@@ -120,13 +121,11 @@ def update_pyproject(info, pyproject, io, dry_run=False):
         for key, value in info.items():
             versions[key] = value
     except KeyError as ex:
-        io.write_line(f'Error parsing pyproject: {ex}')
+        write_line(f'Error parsing pyproject: {ex}')
         return
 
     # Save the updates
-    if dry_run:
-        io.write_line('dry-run mode, skip updating pyproject.toml')
-    else:
+    if not dry_run:
         pyproject.save()
 
 
