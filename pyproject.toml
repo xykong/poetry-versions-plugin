@@ -14,7 +14,7 @@ keywords = ["packaging", "poetry", "plugin", "versioning", "git"]
 [tool.poetry.dependencies]
 python = ">=3.8,<4"
 gitpython = "^3.1.43"
-poetry = "^1.8.4"
+poetry = ">=1.8"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
