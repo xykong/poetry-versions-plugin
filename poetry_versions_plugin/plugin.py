@@ -24,6 +24,11 @@ class VersionsPlugin(Plugin):
 
 
 def write_line(message: str, verbosity: Verbosity = Verbosity.VERBOSE):
+    """
+    This function is a placeholder for @wrap_write_line decorator.
+    It helps for pycharm or pylint to recognize the function.
+    It is replaced by the actual implementation in wrap_write_line.
+    """
     print(message, verbosity)
 
 
@@ -45,7 +50,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             self,
             event: ConsoleCommandEvent,
             event_name: str,
-            dispatcher: EventDispatcher
+            dispatcher: EventDispatcher  # noqa
     ) -> None:
         io = event.io
         io.write_line(f'<b>{PLUGIN_NAME}</b>: before_version_command {event_name} init', Verbosity.VERBOSE)
@@ -63,8 +68,8 @@ class VersionsApplicationPlugin(ApplicationPlugin):
     def after_version_command(
             self,
             event: ConsoleCommandEvent,
-            event_name: str,
-            dispatcher: EventDispatcher
+            event_name: str,  # noqa
+            dispatcher: EventDispatcher  # noqa
     ) -> None:
         write_line('init')
 
@@ -85,6 +90,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
         write_line('start processing')
 
         dry_run = event.command.option('dry-run')
+        short = event.command.option('short')
 
         # 获取 Git 信息
         if not self.git_info:
@@ -95,12 +101,12 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         allow_dirty = pyproject_get(pyproject, 'tool.versions.settings.allow_dirty', False)
         updated = ['pyproject.toml']
-        update_pyproject(self.git_info, pyproject, event.io, dry_run)
+        update_pyproject(self.git_info, pyproject, write_line, dry_run)
 
         files = pyproject_get(pyproject, 'tool.versions.settings.filename', [])
         for file in files:
             if file.endswith('.py'):
-                update_py_file(file, self.git_info, dry_run)
+                update_py_file(file, self.git_info, write_line, dry_run)
                 write_line(f'update python file {file}')
                 updated.append(file)
             elif file == 'README.md':
@@ -134,6 +140,6 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         write_line(f'the new version has been updated: {self.git_info}')
 
-        write_line(f"versions updated of {', '.join(updated)}", Verbosity.NORMAL)
+        write_line(f"versions updated of {', '.join(updated)}", Verbosity.VERBOSE if short else Verbosity.NORMAL)
 
         write_line('finished')
