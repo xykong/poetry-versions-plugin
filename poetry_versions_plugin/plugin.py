@@ -78,7 +78,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
             return
 
         # Check if a version argument is provided
-        version_argument = event.command.argument("version")
+        version_argument = event.io.input.argument("version")
         if not version_argument:
             write_line('No version bump specified, skipping updates.')
             return
