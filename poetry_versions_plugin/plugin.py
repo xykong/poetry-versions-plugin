@@ -1,3 +1,5 @@
+import re
+
 from cleo.events import console_events
 from cleo.events.console_command_event import ConsoleCommandEvent
 from cleo.events.event_dispatcher import EventDispatcher
@@ -115,8 +117,13 @@ class VersionsApplicationPlugin(ApplicationPlugin):
                 updated.append(file)
 
         commit = pyproject_get(pyproject, 'tool.versions.settings.commit', False)
-        commit_on = pyproject_get(pyproject, 'tool.versions.settings.commit_on', [])
-        if commit and (version_argument in commit_on or version_argument == self.new_version):
+        commit_on_argument = pyproject_get(pyproject, 'tool.versions.settings.commit_on_argument', [])
+        commit_on_branches = pyproject_get(pyproject, 'tool.versions.settings.commit_on_branches', [])
+
+        current_branch = self.git_info['branch']
+        branch_match = any(re.match(branch_pattern, current_branch) for branch_pattern in commit_on_branches)
+
+        if commit and (version_argument in commit_on_argument or version_argument == self.new_version) and branch_match:
             commit_message = pyproject_get(pyproject, 'tool.versions.settings.commit_message',
                                            "Bump version: {current_version} → {new_version}")
 
@@ -137,6 +144,11 @@ class VersionsApplicationPlugin(ApplicationPlugin):
                 current_version=self.current_version,
                 new_version=self.new_version
             ))
+        else:
+            if not branch_match:
+                write_line(
+                    f'Current branch {current_branch} does not match commit_on_branches patterns, skipping commit.'
+                )
 
         write_line(f'the new version has been updated: {self.git_info}')
 
