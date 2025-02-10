@@ -4,10 +4,11 @@ VENV := .venv/bin
 
 clean:
 	@echo "Cleaning up generated files..."
-	rm -f prometheus_remote_writer/proto/*.py
 	rm -rf .tox
-	find . \( -name '*.pyc' -o -name '__pycache__' \) -exec rm -rf {} +
+	rm -rf .venv
+	rm -rf .pytest_cache
 	rm -rf dist
+	find . \( -name '*.pyc' -o -name '__pycache__' \) -exec rm -rf {} +
 
 
 test:
