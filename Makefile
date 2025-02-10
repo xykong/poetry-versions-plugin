@@ -17,4 +17,4 @@ test:
 
 release:
 	@echo "Creating a new release..."
-	$(VENV)/python scripts/release.py minor
+	$(VENV)/poetry run release patch
