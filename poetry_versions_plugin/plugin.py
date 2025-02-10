@@ -128,7 +128,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
                     write_line(f'git information {self.git_info}, repo is dirty, abort processing')
                     return
 
-                commit_local_changes(pyproject.file.parent, commit_message.format(
+                commit_local_changes(pyproject.file.path.parent, commit_message.format(
                     current_version=self.current_version,
                     new_version=self.new_version
                 ))

@@ -158,7 +158,7 @@ def test_update_py_file(tmp_path, git_info):
     """Test if the update_py_file function correctly generates a Python file."""
     py_path = tmp_path / "version_info.py"
 
-    update_py_file(py_path, git_info)
+    update_py_file(py_path, git_info, lambda line: None)
 
     assert 'branch' in py_path.read_text().strip()
     assert 'commit' in py_path.read_text().strip()
