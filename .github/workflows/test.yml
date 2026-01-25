@@ -54,7 +54,12 @@ jobs:
             venv-${{ runner.os }}-py${{ matrix.python-version }}-
       
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: |
+          # For Poetry 1.x, regenerate lock file if incompatible
+          if [[ "${{ matrix.poetry-version }}" == 1.* ]]; then
+            poetry lock --no-update 2>/dev/null || poetry lock
+          fi
+          poetry install --no-interaction
       
       - name: Run tests
         run: poetry run pytest -v --tb=short
