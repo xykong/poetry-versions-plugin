@@ -7,6 +7,29 @@ from cleo.io.outputs.output import Verbosity
 from poetry_versions_plugin import PLUGIN_NAME
 
 
+def get_project_version(pyproject):
+    """
+    Get project version compatible with both Poetry 1.x and 2.x.
+    
+    Poetry 2.x supports PEP 621 [project] table, which takes priority.
+    Poetry 1.x only supports [tool.poetry] table.
+    
+    :param pyproject: The pyproject object
+    :return: Version string
+    :raises ValueError: If version cannot be found in pyproject.toml
+    """
+    # Poetry 2.x PEP 621 format (priority)
+    if "project" in pyproject.data and "version" in pyproject.data["project"]:
+        return str(pyproject.data["project"]["version"])
+    
+    # Traditional [tool.poetry] format (Poetry 1.x and 2.x)
+    if "tool" in pyproject.data and "poetry" in pyproject.data["tool"]:
+        if "version" in pyproject.data["tool"]["poetry"]:
+            return str(pyproject.data["tool"]["poetry"]["version"])
+    
+    raise ValueError("Cannot find version in pyproject.toml")
+
+
 def pyproject_get(pyproject, path, default=None):
     """
     Retrieve a value from a nested dictionary using a dot-separated key path.

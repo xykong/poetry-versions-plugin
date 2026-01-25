@@ -14,7 +14,7 @@ from poetry.poetry import Poetry
 from poetry_versions_plugin import PLUGIN_NAME
 from poetry_versions_plugin.services import get_git_info, update_pyproject, update_py_file
 from poetry_versions_plugin.services import update_readme, commit_local_changes
-from poetry_versions_plugin.utils import pyproject_get, wrap_write_line
+from poetry_versions_plugin.utils import pyproject_get, wrap_write_line, get_project_version
 
 
 class VersionsPlugin(Plugin):
@@ -87,7 +87,7 @@ class VersionsApplicationPlugin(ApplicationPlugin):
 
         # noinspection PyUnresolvedReferences
         pyproject = event.command.poetry.pyproject
-        self.new_version = str(pyproject.data["tool"]["poetry"]["version"])
+        self.new_version = get_project_version(pyproject)
 
         write_line('start processing')
 
