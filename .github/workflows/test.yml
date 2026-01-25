@@ -31,8 +31,20 @@ jobs:
       
       - name: Install Poetry ${{ matrix.poetry-version }}
         run: |
-          curl -sSL https://install.python-poetry.org | python3 - --version ${{ matrix.poetry-version }}
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Install Poetry with retry logic for older versions
+          for i in {1..3}; do
+            if curl -sSL https://install.python-poetry.org | python3 - --version ${{ matrix.poetry-version }}; then
+              echo "$HOME/.local/bin" >> $GITHUB_PATH
+              break
+            else
+              echo "Poetry installation attempt $i failed, retrying..."
+              sleep 5
+              if [ $i -eq 3 ]; then
+                echo "Failed to install Poetry after 3 attempts"
+                exit 1
+              fi
+            fi
+          done
       
       - name: Verify Poetry version
         run: |
