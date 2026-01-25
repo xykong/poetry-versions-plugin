@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-01-26
+
+### Added
+- GitHub Actions CI/CD workflows for automated testing
+- Multi-version testing matrix: Python 3.9-3.12 × Poetry 1.2-2.1 (15 combinations)
+- CI status badges in README
+
+### Changed
+- Use `snok/install-poetry` GitHub Action for more reliable Poetry installation
+- Improved CI workflow with dependency caching
+
+### Fixed
+- Poetry 1.x lock file compatibility in CI (auto-regenerate for Poetry 1.x)
+- Intermittent Poetry installation failures in CI
+- All 15 test matrix combinations now passing reliably
+
 ## [1.1.0] - 2026-01-26
 
 ### Added
@@ -41,7 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to Poetry 2.0.0+ (previous versions)
 - Bumped minimum Python version to 3.9
 
-[Unreleased]: https://github.com/xykong/poetry-versions-plugin/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/xykong/poetry-versions-plugin/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/xykong/poetry-versions-plugin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/xykong/poetry-versions-plugin/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/xykong/poetry-versions-plugin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/xykong/poetry-versions-plugin/releases/tag/v1.0.0
