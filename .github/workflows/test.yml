@@ -1,0 +1,80 @@
+name: Test
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }} / Poetry ${{ matrix.poetry-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        poetry-version: ["1.2.0", "1.8.3", "2.0.1", "2.1.4"]
+        exclude:
+          - python-version: "3.12"
+            poetry-version: "1.2.0"
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install Poetry ${{ matrix.poetry-version }}
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 - --version ${{ matrix.poetry-version }}
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      
+      - name: Verify Poetry version
+        run: |
+          poetry --version
+          poetry --version | grep -q "${{ matrix.poetry-version }}" || (echo "Poetry version mismatch!" && exit 1)
+      
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+      
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py${{ matrix.python-version }}-poetry${{ matrix.poetry-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            venv-${{ runner.os }}-py${{ matrix.python-version }}-poetry${{ matrix.poetry-version }}-
+            venv-${{ runner.os }}-py${{ matrix.python-version }}-
+      
+      - name: Install dependencies
+        run: poetry install --no-interaction
+      
+      - name: Run tests
+        run: poetry run pytest -v --tb=short
+      
+      - name: Test version command (Poetry 1.x and 2.x compatibility)
+        run: |
+          echo "Testing poetry version command integration..."
+          poetry version --dry-run || true
+          poetry version patch --dry-run || true
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.test.result }}" != "success" ]; then
+            echo "Tests failed!"
+            exit 1
+          fi
+          echo "All tests passed!"

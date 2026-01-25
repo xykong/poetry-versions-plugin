@@ -1,6 +1,8 @@
 # Poetry Versions Plugin
 
-License
+[![Test](https://github.com/xykong/poetry-versions-plugin/actions/workflows/test.yml/badge.svg)](https://github.com/xykong/poetry-versions-plugin/actions/workflows/test.yml)
+[![Lint](https://github.com/xykong/poetry-versions-plugin/actions/workflows/lint.yml/badge.svg)](https://github.com/xykong/poetry-versions-plugin/actions/workflows/lint.yml)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview
 
