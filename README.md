@@ -18,6 +18,19 @@ and integrates seamlessly with Git to ensure that all changes are tracked effect
 - **Release Process Automation**: Provides a script to handle releases using git flow, ensuring a streamlined and
   consistent release process.
 
+## Compatibility
+
+This plugin supports:
+- **Poetry 1.2+** (tested with Poetry 1.2.0 through 1.8.x)
+- **Poetry 2.0+** (tested with Poetry 2.0.0 through 2.1.x)
+
+### PEP 621 Support
+
+Poetry 2.x projects using the PEP 621 `[project]` table format are fully supported.
+The plugin automatically detects and updates the version in the correct location, whether it's in:
+- `[project].version` (PEP 621 format, Poetry 2.x)
+- `[tool.poetry].version` (traditional format, Poetry 1.x and 2.x)
+
 ## Installation
 
 To install the Poetry Versions Plugin, add it to your Poetry project:
